@@ -15,14 +15,27 @@ ActiveRecord::Schema.define(version: 2018_12_17_184959) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "apps", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.string "client_id", null: false
+    t.string "client_secret", null: false
+    t.datetime "expired_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_apps_on_client_id"
+    t.index ["user_id"], name: "index_apps_on_user_id"
+  end
+
   create_table "clients", force: :cascade do |t|
+    t.bigint "app_id", null: false
     t.bigint "user_id", null: false
     t.string "access_token", null: false
-    t.string "access_secret", null: false
     t.datetime "expired_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["access_token"], name: "index_clients_on_access_token"
+    t.index ["app_id"], name: "index_clients_on_app_id"
     t.index ["user_id"], name: "index_clients_on_user_id"
   end
 

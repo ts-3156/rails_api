@@ -6,9 +6,9 @@ class Security
       OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), secret, "#{nonce}#{url}")
     end
 
-    def verify?(token, nonce, signature, url)
-      client = Client.find_by(access_token: token)
-      client && sign(client.access_secret, nonce, url) == signature
+    def verify?(client_id, nonce, signature, url)
+      app = App.find_by(client_id: client_id)
+      app && sign(app.client_secret, nonce, url) == signature
     end
   end
 end

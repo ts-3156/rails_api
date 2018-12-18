@@ -5,6 +5,7 @@ class User < ApplicationRecord
   # This is in addition to a real persisted field like 'email'
   attr_accessor :login
 
+  has_many :apps
   has_many :clients
 
   class << self

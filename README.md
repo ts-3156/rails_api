@@ -1,24 +1,8 @@
-# README
+# API only Rails demo
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+```ruby
+user = User.create(email: 'email@example.com', name: 'John', password: 'pass')
+app = App.create(user: user, name: "#{user.name}'s app")
+client = Client.create(app: app, user: uuser)
+```
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
