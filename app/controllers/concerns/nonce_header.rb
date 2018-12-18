@@ -21,14 +21,14 @@ module Concerns::NonceHeader
     !nonce_header.to_s.empty?
   end
 
-  NONCE_TIMEOUT = 5.minutes
+  NONCE_TIMEOUT = 1.minutes
 
   def has_valid_nonce_header?
     nonce_header.match?(/\A\d+\z/) && nonce_header.to_i > (Time.zone.now - NONCE_TIMEOUT).to_i
   end
 
   def nonce_header
-    request.headers['X-NONCE']
+    request.headers['X-Nonce']
   end
 
 end

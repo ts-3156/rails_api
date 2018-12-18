@@ -38,8 +38,8 @@
     </style>
     <script src="./sha256.js"></script>
     <script>
-        var ACCESS_TOKEN = 'REPLACE ME';
-        var ACCESS_SECRET = 'REPLACE ME';
+        var CLIENT_ID = 'REPLACE ME';
+        var CLIENT_SECRET = 'REPLACE ME';
 
         function sign(secret, nonce, url) {
             return sha256.hmac(secret, nonce + url);
@@ -48,7 +48,7 @@
         function signIn(email, password) {
             var url = '/sessions/sign_in';
             var nonce = Date.now();
-            var signature = sign(ACCESS_SECRET, nonce, url);
+            var signature = sign(CLIENT_SECRET, nonce, url);
 
             $.ajax({
                 type: 'post',
@@ -61,7 +61,7 @@
                 }),
                 headers: {
                     'X-Nonce': nonce,
-                    'X-Access-Token': ACCESS_TOKEN,
+                    'X-Client-Id': CLIENT_ID,
                     'X-Signature': signature
                 },
                 success: function (res) {

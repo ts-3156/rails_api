@@ -2,7 +2,7 @@ module Concerns::SignatureHeader
   extend ActiveSupport::Concern
 
   include Concerns::NonceHeader
-  include Concerns::AccessTokenHeader
+  include Concerns::ClientIdHeader
 
   def signature_header_not_found
     render json: {error: __method__}, status: :bad_request
@@ -16,12 +16,12 @@ module Concerns::SignatureHeader
     check_nonce_header
     return if performed?
 
-    check_access_token_header
+    check_client_id_header
     return if performed?
 
     if !has_signature_header?
       signature_header_not_found
-    elsif !has_valid_signature_header?(access_token_header, nonce_header, request.path_info)
+    elsif !has_valid_signature_header?(client_id_header, nonce_header, request.path_info)
       invalid_signature_header
     end
   end
@@ -30,11 +30,11 @@ module Concerns::SignatureHeader
     !signature_header.to_s.empty?
   end
 
-  def has_valid_signature_header?(access_token, nonce, path)
-    Security.verify?(access_token, nonce, signature_header, path)
+  def has_valid_signature_header?(client_id, nonce, path)
+    Security.verify?(client_id, nonce, signature_header, path)
   end
 
   def signature_header
-    request.headers['X-SIGNATURE']
+    request.headers['X-Signature']
   end
 end
