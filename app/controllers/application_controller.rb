@@ -8,9 +8,10 @@ class ApplicationController < ActionController::Base
 
   def something_error(ex)
     unless performed?
+      status = ex.class == ActiveRecord::RecordInvalid ? :unprocessable_entity : :internal_server_error
       respond_to do |type|
-        type.json {render json: {error: ex.class, error_message: ex.message}, status: :internal_server_error}
-        type.all {render plain: "#{ex.class}: #{ex.message}", status: :internal_server_error}
+        type.json {render json: {error: ex.class.to_s, error_message: ex.message}, status: status}
+        type.all {render plain: "#{ex.class}: #{ex.message}", status: status}
       end
     end
   end

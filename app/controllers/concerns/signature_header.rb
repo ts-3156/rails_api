@@ -37,4 +37,8 @@ module Concerns::SignatureHeader
   def signature_header
     request.headers['X-Signature']
   end
+
+  def current_app
+    @app ||= App.find_by(client_id: client_id_header)
+  end
 end

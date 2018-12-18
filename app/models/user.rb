@@ -8,23 +8,25 @@ class User < ApplicationRecord
   has_many :apps
   has_many :clients
 
-  validates :name, uniqueness: true
+  validates :email, uniqueness: true, format: {with: URI::MailTo::EMAIL_REGEXP}
+  validates :name, uniqueness: true, format: {with: /\A[\w\-_.]{3,}\z/}
+  validates :password, length: {minimum: 6}, on: :create
 
   validates_specific :name
 
   class << self
-    def create_with_access_token!(email, name, password, verification_code, options = {})
-      user = User.new(email: email, name: name, password: password)
+    def create_with_access_token!(email:, name:, password:, password_confirmation:, app:)
+      user = User.new(email: email, name: name, password: password, password_confirmation: password_confirmation)
 
       client = nil
 
       transaction do
         # TODO Use verification_code!
         user.save!
-        client = user.clients.create!
+        client = user.clients.create!(app: app)
       end
 
-      [user, client]
+      [user, client.access_token]
     end
 
     def find_for_database_authentication(conditions)
