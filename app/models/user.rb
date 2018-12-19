@@ -8,8 +8,12 @@ class User < ApplicationRecord
   has_many :apps
   has_many :clients
 
+  validates :name, uniqueness: true
+
+  validates_specific :name
+
   class << self
-    def create_with_client!(email, name, password, verification_code, options = {})
+    def create_with_access_token!(email, name, password, verification_code, options = {})
       user = User.new(email: email, name: name, password: password)
 
       client = nil

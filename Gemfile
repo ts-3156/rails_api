@@ -40,6 +40,7 @@ group :development, :test do
 end
 
 gem 'active_model_serializers'
+gem 'validate_specific_value'
 
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
