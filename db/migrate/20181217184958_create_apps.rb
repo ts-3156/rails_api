@@ -9,7 +9,7 @@ class CreateApps < ActiveRecord::Migration[5.2]
 
       t.timestamps
 
-      t.index :client_id
+      t.index :client_id, unique: true
     end
   end
 end

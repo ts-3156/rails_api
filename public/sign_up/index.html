@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Original https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=simple-login-form -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Sign up</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        .login-form {
+            width: 340px;
+            margin: 50px auto;
+        }
+
+        .login-form form {
+            margin-bottom: 15px;
+            background: #f7f7f7;
+            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+        }
+
+        .login-form h2 {
+            margin: 0 0 15px;
+        }
+
+        .form-control, .btn {
+            min-height: 38px;
+            border-radius: 2px;
+        }
+
+        .btn {
+            font-size: 15px;
+            font-weight: bold;
+        }
+    </style>
+    <script src="../sign_in/sha256.js"></script>
+    <script>
+        function sign(secret, nonce, url) {
+            return sha256.hmac(secret, nonce + url);
+        }
+
+        function signUp(email, name, password, password_confirmation, client_id, client_secret) {
+            var url = '/registrations/sign_up';
+            var nonce = Date.now();
+            var signature = sign(client_secret, nonce, url);
+
+            $.ajax({
+                type: 'post',
+                url: url,
+                contentType: 'application/json',
+                dataType: "json",
+                data: JSON.stringify({
+                    email: email,
+                    name: name,
+                    password: password,
+                    password_confirmation: password_confirmation,
+                }),
+                headers: {
+                    'X-Nonce': nonce,
+                    'X-Client-Id': client_id,
+                    'X-Signature': signature
+                },
+                success: function (res) {
+                    $('.result').text(JSON.stringify(res));
+                    console.log(res);
+                },
+                error: function (xhr) {
+                    $('.result').text(xhr.responseText);
+                    console.log(xhr.responseText);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $('form').submit(function (e) {
+                e.preventDefault();
+                var client_id = $('#client_id').val();
+                var client_secret = $('#client_secret').val();
+
+                var email = $(e.currentTarget).find('input[name="email"]').val();
+                var name = $(e.currentTarget).find('input[name="name"]').val();
+                var password = $(e.currentTarget).find('input[name="password"]').val();
+                var password_confirmation = $(e.currentTarget).find('input[name="password_confirmation"]').val();
+                signUp(email, name, password, password_confirmation, client_id, client_secret);
+            });
+        });
+    </script>
+</head>
+
+<body>
+<div class="login-form">
+    <div class="form-group">
+        <input type="text" id="client_id" name="client_id" class="form-control" placeholder="CLIENT_ID" required="required">
+        <small class="form-text text-muted">Debug value</small>
+    </div>
+    <div class="form-group">
+        <input type="text" id="client_secret" name="client_secret" class="form-control" placeholder="CLIENT_SECRET" required="required">
+        <small class="form-text text-muted">Debug value</small>
+    </div>
+
+    <form action="#" method="post">
+        <h2 class="text-center">Sign up</h2>
+        <div class="form-group">
+            <input type="text" name="email" class="form-control" placeholder="Email" required="required">
+        </div>
+        <div class="form-group">
+            <input type="text" name="name" class="form-control" placeholder="Name" required="required">
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" class="form-control" placeholder="Password" required="required">
+        </div>
+        <div class="form-group">
+            <input type="password" name="password_confirmation" class="form-control" placeholder="Password confirmation" required="required">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-block">Sign up</button>
+        </div>
+        <div class="clearfix">
+            <label class="pull-left checkbox-inline"><input type="checkbox"> Remember me</label>
+            <a href="#" class="pull-right">Forgot Password?</a>
+        </div>
+    </form>
+    <p class="text-center"><a href="#">Create an Account</a></p>
+</div>
+</body>
+</html>
